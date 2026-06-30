@@ -33,6 +33,7 @@ public class GodlyEmblem extends EasyEnchant {
         this.saveBukkitEnchantment(enchantment);
         name = ColorCodes.LIGHT_PURPLE.getCode() + "[" + ColorCodes.DARK_PURPLE.getCode() + "Godly " + ColorCodes.GOLD.getCode() + "Emblem" + ColorCodes.LIGHT_PURPLE.getCode() + "]";
         DivineEmblem.register();
+
     }
 
 
