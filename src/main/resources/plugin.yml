@@ -1,0 +1,17 @@
+name: DivineObjects
+description: $description
+version: '${version}'
+
+main: com.rschao.plugins.divineObjects.Plugin
+api-version: '1.21'
+load: STARTUP
+
+depend:
+  - CommandAPI
+  - UltimateAdvancementAPI
+  - bossfight
+  - TechniqueAPI
+  - ShowdownCore
+  - deltaplugin
+
+authors: [ RSChao ]
