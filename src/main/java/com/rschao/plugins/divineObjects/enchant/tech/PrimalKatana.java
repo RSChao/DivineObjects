@@ -10,6 +10,7 @@ import com.delta.plugins.techs.roaring_soul;
 import com.rschao.enchants.OblivionEnchant;
 import com.rschao.plugins.divineObjects.Plugin;
 import com.rschao.plugins.divineObjects.enchant.PrimalOblivion;
+import com.rschao.plugins.divineObjects.event.Events;
 import com.rschao.plugins.divineObjects.event.definition.KatanaSheathEvent;
 import com.rschao.plugins.techniqueAPI.tech.Technique;
 import com.rschao.plugins.techniqueAPI.tech.TechniqueMeta;
@@ -133,7 +134,7 @@ public class PrimalKatana {
             TargetSelectors.self(),
             (ctx, token) -> {
                 Player p = ctx.caster();
-                BossEvents.isSheathTechOn.put(p, true);
+                Events.isSheathTechOn.put(p, true);
             }
     );
 
@@ -173,8 +174,8 @@ public class PrimalKatana {
             TargetSelectors.self(),
             (ctx, token) -> {
                 Player p = ctx.caster();
-                BossEvents.isGlitchTechOn.put(p, true);
-                Bukkit.getScheduler().runTaskLater(plugin, () -> BossEvents.isGlitchTechOn.put(p, false), 20*20);
+                Events.isGlitchTechOn.put(p, true);
+                Bukkit.getScheduler().runTaskLater(plugin, () -> Events.isGlitchTechOn.put(p, false), 20*20);
             }
     );
 
@@ -187,27 +188,26 @@ public class PrimalKatana {
                 Player p = ctx.caster();
                 Player target = roaring_soul.getClosestPlayer(p.getLocation());
                 if (target == null) return;
-                int abysses = events.getGroupIdCount(p);
+                int abysses = events.getGroupIdCount(target);
                 List<String> ids = new ArrayList<>();
                 for(int i = 0; i < abysses; i++) {
                     ids.add(events.getGroupId(p, i));
                 }
                 Random rand = new Random();
                 int random = rand.nextInt(ids.size());
-                List<String> ids2 = new ArrayList<>();
-                for(int i = 0; i < ids.size(); i++) {
-                    ids2.add(ids.get(i));
-                }
+                List<String> ids2 = new ArrayList<>(ids);
                 ids2.remove(random);
                 plugin.getConfig().set(target.getUniqueId() + ".groupids", ids2);
                 plugin.saveConfig();
                 plugin.reloadConfig();
                 target.sendMessage("Your magic " + ids.get(random) + " has been forgotten.");
+                p.sendMessage("Your opponent's magic " + ids.get(random) + " has been forgotten.");
                 Bukkit.getScheduler().runTaskLater(plugin, () ->{
                     plugin.getConfig().set(target.getUniqueId() + ".groupids", ids);
                     plugin.saveConfig();
                     plugin.reloadConfig();
                     target.sendMessage("Your magic has been restored.");
+                    p.sendMessage("Your opponent's magic has been restored.");
                 }, 20*60*5);
             }
     );
@@ -339,12 +339,14 @@ public class PrimalKatana {
                         }
 
                         // Apply short-duration buffs every 2 ticks (duration 40 ticks = 2 seconds)
-                        user.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 40, 0, false, false, true));
+                        user.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 400, 0, false, false, true));
                         user.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 40, 5, false, false, true));
                         user.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, 2, false, false, true));
                         user.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 40, 2, false, false, true));
                         user.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40, 0, false, false, true));
                         user.removePotionEffect(PotionEffectType.WITHER);
+                        user.removePotionEffect(PotionEffectType.SLOWNESS);
+                        user.removePotionEffect(PotionEffectType.BLINDNESS);
 
                         ticks += 2;
                     }
