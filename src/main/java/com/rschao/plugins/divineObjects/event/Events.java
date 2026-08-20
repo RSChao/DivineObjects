@@ -143,15 +143,13 @@ public class Events implements Listener {
         ItemStack i = ev.getItem();
         if(i == null) return;
         if(!i.hasItemMeta()) return;
-        if(i.getItemMeta().hasEnchant(new DivineBlessing().getCustomEnchantment().toBukkitEnchantment())){
-            if(i.isSimilar(DivineItems.LogosAegisCore())){
-                i.setAmount(0);
-                AegisCoresTechniques.logos.use(p);
-                Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), () ->{
-                    p.getLocation().getWorld().dropItemNaturally(p.getLocation(), DivineItems.LogosAegisCore());
-                    p.sendMessage("A Shadow Aegis Core has been dropped!");
-                }, 20*60*5);
-            }
+        if(i.isSimilar(DivineItems.LogosAegisCore())){
+            i.setAmount(0);
+            AegisCoresTechniques.logos.use(p);
+            Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), () ->{
+                p.getLocation().getWorld().dropItemNaturally(p.getLocation(), DivineItems.LogosAegisCore());
+                p.sendMessage("A Shadow Aegis Core has been dropped!");
+            }, 20*60*5);
         }
     }
 
