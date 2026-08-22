@@ -2,6 +2,7 @@ package com.rschao.plugins.divineObjects.enchant;
 
 import com.rschao.enchants.DimensionalManipEnchant;
 import com.rschao.plugins.divineObjects.Plugin;
+import com.rschao.plugins.divineObjects.enchant.tech.TriforceTechs;
 import com.rschao.plugins.showdowncore.showdownCore.api.enchantment.CustomEnchantment;
 import com.rschao.plugins.showdowncore.showdownCore.api.enchantment.definition.EasyEnchant;
 import com.rschao.plugins.showdowncore.showdownCore.api.enchantment.util.ColorCodes;
@@ -36,7 +37,7 @@ public class TriforceSword extends EasyEnchant {
         e.setSupportedItem("#minecraft:enchantable/sharp_weapon");
         saveBukkitEnchantment(e);
         name = ChatColor.BOLD+ "Triforce Sword";
-        //;
+        TriforceTechs.register();
     }
 
     Map<Player, Boolean> hasDropped = new HashMap<>();
