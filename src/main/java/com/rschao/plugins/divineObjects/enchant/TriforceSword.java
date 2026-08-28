@@ -41,7 +41,7 @@ public class TriforceSword extends EasyEnchant {
     }
 
     Map<Player, Boolean> hasDropped = new HashMap<>();
-    String groupId = "divine_triforce_swords";
+    String groupId = "divine_triforce_sword";
     Map<Player, String> chosenId = new HashMap<>();
     Enchantment e;
     @EventHandler(priority = EventPriority.HIGH)
