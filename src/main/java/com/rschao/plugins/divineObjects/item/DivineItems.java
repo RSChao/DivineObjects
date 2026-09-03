@@ -243,7 +243,7 @@ public class DivineItems {
         meta.setMaxStackSize(1);
         meta.setLore(List.of(
                 "Core from which a powerful life form can be created",
-                "Belongs to an unknown entity"));
+                "Belongs to Origin, the Butcher of Oblivion"));
         meta.addEnchant(new DivineBlessing().getCustomEnchantment().toBukkitEnchantment(), 1, true);
         item.setItemMeta(meta);
         return item;
