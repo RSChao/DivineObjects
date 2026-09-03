@@ -46,6 +46,7 @@ public final class Plugin extends JavaPlugin {
                 new DivineBlessing(),
                 new DivineForgery(),
                 new PrimalOblivion(),
+                new BladeOfTheEnd(),
                 new DivineBlessing(),
                 new GodlyEmblem(),
                 new OblivionKing(),

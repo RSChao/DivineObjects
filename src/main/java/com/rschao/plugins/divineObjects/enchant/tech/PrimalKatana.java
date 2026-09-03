@@ -8,7 +8,9 @@ import com.delta.plugins.events.BossEvents;
 import com.delta.plugins.events.events;
 import com.delta.plugins.techs.roaring_soul;
 import com.rschao.enchants.OblivionEnchant;
+import com.rschao.events.soulEvents;
 import com.rschao.plugins.divineObjects.Plugin;
+import com.rschao.plugins.divineObjects.enchant.BladeOfTheEnd;
 import com.rschao.plugins.divineObjects.enchant.PrimalOblivion;
 import com.rschao.plugins.divineObjects.event.Events;
 import com.rschao.plugins.divineObjects.event.definition.KatanaSheathEvent;
@@ -21,6 +23,7 @@ import com.rschao.plugins.techniqueAPI.tech.selectors.TargetSelectors;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -39,6 +42,7 @@ import java.util.*;
 
 public class PrimalKatana {
     static final String TECH_ID = "divine_primal_katana";
+    static final String TECH_ID_AWAKENED = "divine_primal_katana_awakened";
     static final Plugin plugin = Plugin.getPlugin(Plugin.class);
     public static void register() {
         TechRegistry.registerTechnique(TECH_ID, change_model);
@@ -48,6 +52,15 @@ public class PrimalKatana {
         TechRegistry.registerTechnique(TECH_ID, EternalGlitch);
         TechRegistry.registerTechnique(TECH_ID, forgotten_magic);
         TechRegistry.registerTechnique(TECH_ID, katana_world_apocalypse);
+        //register awakened techs
+        TechRegistry.registerTechnique(TECH_ID_AWAKENED, change_model);
+        TechRegistry.registerTechnique(TECH_ID_AWAKENED, oblivionSlash);
+        TechRegistry.registerTechnique(TECH_ID_AWAKENED, sheathOfOblivion);
+        TechRegistry.registerTechnique(TECH_ID_AWAKENED, witheringWorld);
+        TechRegistry.registerTechnique(TECH_ID_AWAKENED, EternalGlitch);
+        TechRegistry.registerTechnique(TECH_ID_AWAKENED, forgotten_magic);
+        TechRegistry.registerTechnique(TECH_ID_AWAKENED, katana_world_apocalypse);
+        TechRegistry.registerTechnique(TECH_ID_AWAKENED, supreme);
     }
 
     static Technique change_model = new Technique("change_model", "Change Model", new TechniqueMeta(false, 0, List.of("Changes the model of the weapon")), TargetSelectors.self(), (ctx, token) ->{
@@ -74,8 +87,29 @@ public class PrimalKatana {
                     Bukkit.getPluginManager().callEvent(sheathEvent);
                 }
             }
-        } else {
-            p.sendMessage("You must have the Primal Oblivion enchantment to use this technique.");
+        } else if(i.containsEnchantment(new BladeOfTheEnd().getCustomEnchantment().toBukkitEnchantment())) {
+            String m = i.getItemMeta().getItemModel().getKey();
+            ItemMeta meta = i.getItemMeta();
+            if(m.equals("oblivion_katana_l")) {
+                meta.setItemModel(NamespacedKey.minecraft("oblivion_katana_aegis_r"));
+                i.setItemMeta(meta);
+                p.sendMessage("Switched to right hand model!");
+                if(p.getMainHand().equals(MainHand.LEFT)){
+                    KatanaSheathEvent sheathEvent = new KatanaSheathEvent(p);
+                    Bukkit.getPluginManager().callEvent(sheathEvent);
+                }
+            }
+            else if(m.equals("oblivion_katana_r")) {
+                meta.setItemModel(NamespacedKey.minecraft("oblivion_katana_aegis_l"));
+                i.setItemMeta(meta);
+                p.sendMessage("Switched to left hand model!");
+                if(p.getMainHand().equals(MainHand.RIGHT)){
+                    KatanaSheathEvent sheathEvent = new KatanaSheathEvent(p);
+                    Bukkit.getPluginManager().callEvent(sheathEvent);
+                }
+            }
+        }else {
+            p.sendMessage("You must have the Primal Oblivion enchantment to use this technique. Talk to an admin if this is an error");
         }
 
     });
@@ -354,4 +388,82 @@ public class PrimalKatana {
                 buffTask.runTaskTimer(plugin, 0L, 2L);
             }
     );
+
+    static Technique supreme = new Technique("supreme:void_slash", "Supreme Magic: Void Slash", true, cooldownHelper.hour, List.of("Allows the user to perform", "a chargeable attack"), TargetSelectors.radialPlayers(200), (ctx, token) ->{
+        List<String> dialogue = List.of(
+                "I am thou, and thou art I.",
+                "Heed my call, world of nothing",
+                "May the divinity of the forgotten become one with my determination.",
+                "May the souls whose memory none retain join as one in this moment.",
+                "Forgotten World! Heed my call! Let us slay those who dare stand before us!",
+                "In the name of " + ctx.caster().getName() + ", wielder of Oblivion" + ", i cast",
+                ChatColor.BLACK + (ChatColor.BOLD + "Supreme Magic: Slayer of Gods") + ChatColor.RESET + "!"
+        );
+
+        for(int i = 0; i < dialogue.size(); i++) {
+            int finalI = i;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    if(finalI == dialogue.size() - 1){
+                        p.sendTitle(dialogue.get(finalI), "", 10, 70, 20);
+                    }
+                    else {
+                        p.sendMessage(dialogue.get(finalI));
+                    }
+                }
+
+            }, i*30L); // Delay of 30 ticks (1.5 seconds)
+        }
+        Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), () ->{
+            Events.isVoidSlashCharging.put(ctx.caster(), true);
+            Player p = ctx.caster();
+            p.sendTitle(ChatColor.DARK_RED + ChatColor.BOLD.toString() + "Charge up your slashes", "", 0, 3*20, 0);
+            Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), () ->{
+                Events.isVoidSlashCharging.put(ctx.caster(), false);
+                int charges = Events.voidSlashCharges.getOrDefault(p, 0);
+                if(charges > 0){
+                    for(LivingEntity e : ctx.targets()){
+                        if(e.getLocation().distance(p.getLocation()) > 27) continue;
+                        for(int i = 0; i<charges; i++){
+                            if(i%3 != 0) continue;
+                            double h = e.getHealth();
+                            double fh = e.getHealth()-20;
+                            if(fh <= 0){
+                                e.removePotionEffect(PotionEffectType.RESISTANCE);
+                                Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), () ->e.damage(999), 1);
+                            }
+                            else e.setHealth(fh);
+                        }
+                    }
+                }
+                else if(charges == 0){
+                    for(int i = 0; i<3;i++){
+                        Player player = p;
+                        Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), ()->{
+                            Location center = player.getEyeLocation().add(player.getLocation().getDirection().normalize().multiply(2));
+                            Vector dir = player.getLocation().getDirection().normalize();
+                            for (LivingEntity ent : player.getWorld().getLivingEntities()) {
+                                if (ent == player) continue;
+                                Vector toEnt = ent.getLocation().toVector().subtract(player.getEyeLocation().toVector());
+                                double dot = toEnt.normalize().dot(dir);
+                                double dist = ent.getLocation().distance(player.getEyeLocation());
+                                if (dot > 0.85) {
+                                    ent.damage(9999, player);
+                                    ent.setNoDamageTicks(1);
+                                }
+                            }
+                            // Disparar rayo de partículas
+                            Location start = center.clone();
+                            Vector rayDir = dir.clone();
+                            for (double d = 0; d < 20; d += 0.5) {
+                                Location point = start.clone().add(rayDir.clone().multiply(d));
+                                p.getWorld().spawnParticle(Particle.END_ROD, point, 2, 0.05, 0.05, 0.05, 0.01);
+                            }
+                        }, 2*i);
+                    }
+                }
+            }, 30L);
+        }, 30*(dialogue.size()+2));
+    });
+
 }

@@ -49,6 +49,36 @@ public class DivineItems {
         item.setItemMeta(meta);
         return item;
     }
+    public static ItemStack primalKatanaAwakened(Player p){
+        ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Primordial Blade of Oblivion");
+        meta.setLore(java.util.Arrays.asList(
+                ChatColor.GRAY + "A blade forged by the god",
+                ChatColor.GRAY + "who created all of Showdown.",
+                ChatColor.GRAY + "It is said that this blade",
+                ChatColor.GRAY + "contains the power,",
+                ChatColor.GRAY + "of the Aegis of Atemporality."
+        ));
+        meta.addEnchant((new DivineForgery()).getCustomEnchantment().toBukkitEnchantment(), 3, true);
+        meta.addEnchant(Enchantment.FIRE_ASPECT, 3, true);
+        meta.addEnchant(Enchantment.SWEEPING_EDGE, 4, true);
+        meta.addEnchant(Enchantment.KNOCKBACK, 1, true);
+        meta.addEnchant((new GenoEnchant()).getCustomEnchantment().toBukkitEnchantment(), 4, true);
+        meta.addEnchant((new OblivionEnchant()).getCustomEnchantment().toBukkitEnchantment(), 1, true);
+        meta.addEnchant((new GlitchEnchant()).getCustomEnchantment().toBukkitEnchantment(), 2, true);
+        meta.addEnchant((new WitherEnchant()).getCustomEnchantment().toBukkitEnchantment(), 1, true);
+        Enchantment e = EnchantmentRegistry.getCustomEnchantment("minecraft", "drain");
+        if(e != null){
+            meta.addEnchant(e, 3, true);
+        }
+        meta.addEnchant((new BladeOfTheEnd()).getCustomEnchantment().toBukkitEnchantment(), 1, true);
+        MainHand mh = p.getMainHand();
+        meta.setItemModel(NamespacedKey.minecraft("oblivion_katana_aegis_" + ((mh.equals(MainHand.RIGHT)) ? "r" : "l")));
+        meta.setUnbreakable(true);
+        item.setItemMeta(meta);
+        return item;
+    }
     public static ItemStack primalKatana(){
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();

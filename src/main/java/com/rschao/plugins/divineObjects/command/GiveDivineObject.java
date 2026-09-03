@@ -23,6 +23,10 @@ public class GiveDivineObject {
                         player.getInventory().addItem(DivineItems.primalKatana(player));
                         hotbarMessage.sendHotbarMessage(player, "You have been given the Primal Oblivion Katana!");
                         break;
+                    case "katana_buff":
+                        player.getInventory().addItem(DivineItems.primalKatanaAwakened(player));
+                        hotbarMessage.sendHotbarMessage(player, "You have been given the Primal Oblivion Katana!");
+                        break;
                     case "emblem":
                         player.getInventory().addItem(DivineItems.divineEmblem());
                         hotbarMessage.sendHotbarMessage(player, "You have been given the Divine Emblem!");
