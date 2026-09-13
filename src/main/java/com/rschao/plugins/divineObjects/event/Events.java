@@ -165,7 +165,7 @@ public class Events implements Listener {
         forgottenItems.put(p, items);
     }
 
-    ItemStack aegis_blade;
+    /*ItemStack aegis_blade;
     @EventHandler
     void AnvilRecipes(PrepareAnvilEvent ev){
         ItemStack[] items = ev.getInventory().getContents();
@@ -193,7 +193,7 @@ public class Events implements Listener {
                 }
             }
         }
-    }
+    }*/
 
     @EventHandler
     void onPlayerHit(PlayerInteractEvent ev){

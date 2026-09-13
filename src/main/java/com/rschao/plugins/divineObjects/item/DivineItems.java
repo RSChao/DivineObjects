@@ -151,6 +151,33 @@ public class DivineItems {
         return item;
     }
 
+    public static ItemStack oblivionSwordAwakened(){
+        ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.BLACK + "" + ChatColor.BOLD + "Oblivion King's blade");
+        meta.setLore(java.util.Arrays.asList(
+                ChatColor.GRAY + "A blade wielded by the Butcher of Oblivion.",
+                ChatColor.GRAY + "It has the power to slay worlds, and even gods themselves.",
+                ChatColor.DARK_RED + "" + ChatColor.BOLD + "This blade is said to be able to kill even the Aegises of Showdown."
+        ));
+        meta.addEnchant((new DivineForgery()).getCustomEnchantment().toBukkitEnchantment(), 3, true);
+        meta.addEnchant(Enchantment.FIRE_ASPECT, 3, true);
+        meta.addEnchant(Enchantment.SWEEPING_EDGE, 3, true);
+        meta.addEnchant((new GenoEnchant()).getCustomEnchantment().toBukkitEnchantment(), 3, true);
+        meta.addEnchant((new OblivionEnchant()).getCustomEnchantment().toBukkitEnchantment(), 6, true);
+        meta.addEnchant((new GlitchEnchant()).getCustomEnchantment().toBukkitEnchantment(), 2, true);
+        meta.addEnchant((new WitherEnchant()).getCustomEnchantment().toBukkitEnchantment(), 2, true);
+        Enchantment e = EnchantmentRegistry.getCustomEnchantment("minecraft", "drain");
+        if(e != null){
+            meta.addEnchant(e, 3, true);
+        }
+        meta.addEnchant((new OblivionKing()).getCustomEnchantment().toBukkitEnchantment(), 1, true);
+        meta.setItemModel(NamespacedKey.minecraft("origin_sword_awakened"));
+        meta.setUnbreakable(true);
+        item.setItemMeta(meta);
+        return item;
+    }
+
     public static ItemStack MasterSword(){
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
@@ -196,6 +223,30 @@ public class DivineItems {
         }
         meta.addEnchant((new AegisBlade()).getCustomEnchantment().toBukkitEnchantment(), 1, true);
         meta.setItemModel(NamespacedKey.minecraft("aegis_sword"));
+        meta.setUnbreakable(true);
+        item.setItemMeta(meta);
+        return item;
+    }
+    public static ItemStack AegisSwordAwakened(){
+        ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Blade of Showdown");
+        meta.setLore(java.util.Arrays.asList(
+                ChatColor.LIGHT_PURPLE + "A sword wielded by the Aegis of Memory,",
+                ChatColor.LIGHT_PURPLE + "awakened to its final form.",
+                ChatColor.LIGHT_PURPLE + "This blade harnesses the power of the Aegis,",
+                ChatColor.LIGHT_PURPLE + "allowing her full potential to be unleashed."
+        ));
+        meta.addEnchant((new DivineForgery()).getCustomEnchantment().toBukkitEnchantment(), 3, true);
+        meta.addEnchant(Enchantment.FIRE_ASPECT, 5, true);
+        meta.addEnchant(Enchantment.SWEEPING_EDGE, 5, true);
+        meta.addEnchant((new AegisBlessingEnchant()).getCustomEnchantment().toBukkitEnchantment(), 1, true);
+        Enchantment e = EnchantmentRegistry.getCustomEnchantment("minecraft", "drain");
+        if(e != null){
+            meta.addEnchant(e, 3, true);
+        }
+        meta.addEnchant((new AegisBlade()).getCustomEnchantment().toBukkitEnchantment(), 1, true);
+        meta.setItemModel(NamespacedKey.minecraft("aegis_sword_awakened"));
         meta.setUnbreakable(true);
         item.setItemMeta(meta);
         return item;

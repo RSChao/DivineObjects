@@ -60,7 +60,7 @@ public class OblivionKing extends EasyEnchant {
         boolean hasEnchant = (en != null && item.containsEnchantment(e))
                 || (byKey != null && item.containsEnchantment(byKey));
         if (!hasEnchant) return; // <-- CORRECCIÓN: antes devolvías cuando SÍ tenía la encantación
-
+        boolean showUlti = event.getItem().getItemMeta().getItemModel().getKey().contains("awakened");
 
         String group = chosenId.getOrDefault(event.getPlayer(), groupId);
 

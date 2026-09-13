@@ -14,8 +14,11 @@ import com.rschao.plugins.divineObjects.enchant.BladeOfTheEnd;
 import com.rschao.plugins.divineObjects.enchant.PrimalOblivion;
 import com.rschao.plugins.divineObjects.event.Events;
 import com.rschao.plugins.divineObjects.event.definition.KatanaSheathEvent;
+import com.rschao.plugins.divineObjects.item.DivineItems;
+import com.rschao.plugins.showdowncore.showdownCore.api.enchantment.util.ColorCodes;
 import com.rschao.plugins.techniqueAPI.tech.Technique;
 import com.rschao.plugins.techniqueAPI.tech.TechniqueMeta;
+import com.rschao.plugins.techniqueAPI.tech.context.TechniqueContext;
 import com.rschao.plugins.techniqueAPI.tech.cooldown.CooldownManager;
 import com.rschao.plugins.techniqueAPI.tech.cooldown.cooldownHelper;
 import com.rschao.plugins.techniqueAPI.tech.register.TechRegistry;
@@ -245,6 +248,44 @@ public class PrimalKatana {
                 }, 20*60*5);
             }
     );
+    static Technique awakening = new Technique("awakening", "Awakening", new TechniqueMeta(false, 0, List.of("Awakens the Primal Oblivion enchantment")), TargetSelectors.self(), (ctx, token) ->{
+        Player p = ctx.caster();
+        ItemStack i = p.getInventory().getItemInMainHand();
+        if(!i.containsEnchantment(new PrimalOblivion().getCustomEnchantment().toBukkitEnchantment())) return;
+        List<String> dialogue = List.of(
+                "I am thou, and thou art I.",
+                "Heed my call, blade of eternity",
+                "Let our enemies fall into despair, for they have no hope.",
+                "Let us show them the true power of the stagnant.",
+                "Rise above, Aegis of Atemporality! Here is thy true power!",
+                ChatColor.DARK_PURPLE + (ChatColor.BOLD + "Divine Awakening: Primordial Blade of Oblivion") + ChatColor.RESET + "!"
+        );
+
+        for(int it = 0; it < dialogue.size(); it++) {
+            int finalI = it;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                for(Player pl : Bukkit.getOnlinePlayers()){
+                    if(finalI == dialogue.size() - 1){
+                        pl.sendTitle(dialogue.get(finalI), "", 10, 70, 20);
+                    }
+                    else {
+                        pl.sendMessage(dialogue.get(finalI));
+                    }
+                }
+
+            }, it*30L); // Delay of 30 ticks (1.5 seconds)
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, () ->{
+            if(i.containsEnchantment(new PrimalOblivion().getCustomEnchantment().toBukkitEnchantment())) {
+                p.getInventory().setItemInMainHand(DivineItems.primalKatanaAwakened(p));
+                for(Player pl : Bukkit.getOnlinePlayers()){
+                    pl.sendMessage(ChatColor.DARK_PURPLE + ColorCodes.BOLD.getCode() + "The Primordial Blade of Oblivion has been awakened!");
+                }
+            } else {
+                p.sendMessage("You must have the Primal Oblivion enchantment to use this technique. Talk to an admin if this is an error");
+            }
+        }, 30*(dialogue.size()+2));
+    });
 
     // --- KATANA WORLD APOCALYPSE ---
     static Technique katana_world_apocalypse = new Technique(
@@ -279,6 +320,12 @@ public class PrimalKatana {
                         else mat = Material.TINTED_GLASS;
                         b.setType(mat, false);
                     } catch (Exception ignored) {}
+                }
+
+                if(!user.getInventory().getItemInOffHand().hasItemMeta() && user.getInventory().contains(DivineItems.LogosAegisCore())){
+                    //remove the aegis core
+                    user.getInventory().remove(DivineItems.LogosAegisCore());
+                    awakening.use(new TechniqueContext(user, user.getInventory().getItemInMainHand()));
                 }
 
                 for(LivingEntity t : ctx.targets()){
@@ -392,11 +439,11 @@ public class PrimalKatana {
     static Technique supreme = new Technique("supreme:void_slash", "Supreme Magic: Void Slash", true, cooldownHelper.hour, List.of("Allows the user to perform", "a chargeable attack"), TargetSelectors.radialPlayers(200), (ctx, token) ->{
         List<String> dialogue = List.of(
                 "I am thou, and thou art I.",
-                "Heed my call, world of nothing",
-                "May the divinity of the forgotten become one with my determination.",
-                "May the souls whose memory none retain join as one in this moment.",
-                "Forgotten World! Heed my call! Let us slay those who dare stand before us!",
-                "In the name of " + ctx.caster().getName() + ", wielder of Oblivion" + ", i cast",
+                "Heed my call, world of Showdown",
+                "May the divinity of the eternal become one with my will.",
+                "May the souls who rejoice in an eternal now join together as one.",
+                "World of Aion! Heed my call! May the void become my blade, and my blade become the void!",
+                "In the name of " + ctx.caster().getName() + ", wielder of the Aegis of Atemporality" + ", i cast",
                 ChatColor.BLACK + (ChatColor.BOLD + "Supreme Magic: Slayer of Gods") + ChatColor.RESET + "!"
         );
 
@@ -465,5 +512,7 @@ public class PrimalKatana {
             }, 30L);
         }, 30*(dialogue.size()+2));
     });
+
+
 
 }

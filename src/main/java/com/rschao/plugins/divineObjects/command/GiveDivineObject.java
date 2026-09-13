@@ -49,6 +49,12 @@ public class GiveDivineObject {
                         player.getInventory().addItem(DivineItems.RedAegisCore());
                         hotbarMessage.sendHotbarMessage(player, "You have been given the Aegis Cores!");
                         break;
+                    case "aegis_awakened":
+                        player.getInventory().addItem(DivineItems.AegisSwordAwakened());
+                        player.getInventory().addItem(DivineItems.primalKatanaAwakened(player));
+                        player.getInventory().addItem(DivineItems.oblivionSwordAwakened());
+                        hotbarMessage.sendHotbarMessage(player, "You have been given the Aegis Weapons!");
+                        break;
                     // Add more cases for other divine objects
                     default:
                         hotbarMessage.sendHotbarMessage(player, "Unknown divine object: " + objectName);

@@ -6,7 +6,10 @@ import com.delta.plugins.techs.Familiar_love;
 import com.rschao.enchants.OblivionEnchant;
 import com.rschao.events.soulEvents;
 import com.rschao.plugins.divineObjects.Plugin;
+import com.rschao.plugins.divineObjects.enchant.PrimalOblivion;
 import com.rschao.plugins.divineObjects.event.Events;
+import com.rschao.plugins.divineObjects.item.DivineItems;
+import com.rschao.plugins.showdowncore.showdownCore.api.enchantment.util.ColorCodes;
 import com.rschao.plugins.techniqueAPI.tech.Technique;
 import com.rschao.plugins.techniqueAPI.tech.TechniqueMeta;
 import com.rschao.plugins.techniqueAPI.tech.cooldown.CooldownManager;
@@ -20,6 +23,7 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -122,8 +126,8 @@ public class OblivionKingTechs {
             TargetSelectors.self(), (ctx, token) ->{
 
 
-        Events.isOblivionGenoTechOn.put(ctx.caster(), true);
-        Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), () -> Events.isOblivionGenoTechOn.put(ctx.caster(), false), 20*90);
+        Events.isOblivionTechOn.put(ctx.caster(), true);
+        Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), () -> Events.isOblivionTechOn.put(ctx.caster(), false), 20*90);
 
     });
 
@@ -207,6 +211,43 @@ public class OblivionKingTechs {
             }
     );
 
+    static Technique awakening = new Technique("awakening", "Awakening", new TechniqueMeta(false, 0, List.of("Awakens the Primal Oblivion enchantment")), TargetSelectors.self(), (ctx, token) ->{
+        Player p = ctx.caster();
+        ItemStack i = p.getInventory().getItemInMainHand();
+        if(!i.isSimilar(DivineItems.oblivionSword())) return;
+        List<String> dialogue = List.of(
+                "I am thou, and thou art I.",
+                "Heed my call, blade of oblivion",
+                "Let our enemies be forgotten, for they shall be remembered not.",
+                "Let us show them the true power of the forgotten.",
+                "Rise from the ashes, Aegis of Oblivion! Here is thy true power!",
+                ChatColor.DARK_RED + (ChatColor.BOLD + "Divine Awakening: Oblivion King") + ChatColor.RESET + "!"
+        );
+
+        for(int it = 0; it < dialogue.size(); it++) {
+            int finalI = it;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                for(Player pl : Bukkit.getOnlinePlayers()){
+                    if(finalI == dialogue.size() - 1){
+                        pl.sendTitle(dialogue.get(finalI), "", 10, 70, 20);
+                    }
+                    else {
+                        pl.sendMessage(dialogue.get(finalI));
+                    }
+                }
+
+            }, it*30L); // Delay of 30 ticks (1.5 seconds)
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, () ->{
+            if(i.isSimilar(DivineItems.oblivionSword())) {
+                p.getInventory().setItemInMainHand(DivineItems.oblivionSwordAwakened());
+                for(Player pl : Bukkit.getOnlinePlayers()){
+                    pl.sendMessage(ChatColor.DARK_RED + ColorCodes.BOLD.getCode() + "The Oblivion King's blade has been awakened!");
+                }
+            }
+        }, 30*(dialogue.size()+2));
+    });
+
     static Technique godslayer = new Technique(
             "supreme:godslayer",
             "Supreme Magic: Slayer of Gods",
@@ -263,6 +304,13 @@ public class OblivionKingTechs {
                         }
                     }
                     if(pops > 12) pops = 12;
+                    if(pops == 12 && ctx.caster().getInventory().contains(DivineItems.RedAegisCore())){
+                        ctx.caster().getInventory().remove(DivineItems.RedAegisCore());
+                        awakening.use(ctx.caster());
+                    }
+                    else {
+                        pops = 6;
+                    }
                     ctx.caster().sendMessage(ChatColor.BLACK + "Thy power will erase " + pops + " lives from the soul of " + p.getDisplayName());
                     for(int i = 0; i<pops; i++){
                         //the funny happens here

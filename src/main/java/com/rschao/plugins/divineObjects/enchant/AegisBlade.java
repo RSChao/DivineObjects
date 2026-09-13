@@ -63,6 +63,7 @@ public class AegisBlade extends EasyEnchant {
 
 
         String group = chosenId.getOrDefault(event.getPlayer(), groupId);
+        boolean showUlti = event.getItem().getItemMeta().getItemModel().getKey().contains("awakened");
 
         if(event.getItem().getItemMeta().hasEnchant(e)){
             if(!event.getPlayer().isSneaking()) return;
@@ -77,7 +78,7 @@ public class AegisBlade extends EasyEnchant {
                 technique.use(new TechniqueContext(p, p.getInventory().getItemInMainHand()));
             }
             else if(event.getAction().toString().contains("RIGHT")){
-                PlayerTechniqueManager.setCurrentTechnique(p.getUniqueId(), group, (techIndex + 1) % TechRegistry.getAllTechniques(group).size());
+                PlayerTechniqueManager.setCurrentTechnique(p.getUniqueId(), group, (techIndex + 1) % (showUlti ? TechRegistry.getAllTechniques(group).size() : TechRegistry.getAllTechniques(group).size() - 1));
                 techIndex = PlayerTechniqueManager.getCurrentTechnique(p.getUniqueId(), group);
                 p.sendMessage("You have switched to technique: " + TechniqueNameManager.getDisplayName(p, TechRegistry.getAllTechniques(group).get(techIndex)));
             }

@@ -3,8 +3,13 @@ package com.rschao.plugins.divineObjects.enchant.tech;
 import com.rschao.enchants.OblivionEnchant;
 import com.rschao.events.soulEvents;
 import com.rschao.plugins.divineObjects.Plugin;
+import com.rschao.plugins.divineObjects.enchant.PrimalOblivion;
 import com.rschao.plugins.divineObjects.event.Events;
+import com.rschao.plugins.divineObjects.item.DivineItems;
+import com.rschao.plugins.showdowncore.showdownCore.api.enchantment.util.ColorCodes;
 import com.rschao.plugins.techniqueAPI.tech.Technique;
+import com.rschao.plugins.techniqueAPI.tech.TechniqueMeta;
+import com.rschao.plugins.techniqueAPI.tech.context.TechniqueContext;
 import com.rschao.plugins.techniqueAPI.tech.cooldown.CooldownManager;
 import com.rschao.plugins.techniqueAPI.tech.cooldown.cooldownHelper;
 import com.rschao.plugins.techniqueAPI.tech.register.TechRegistry;
@@ -27,6 +32,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rschao.plugins.divineObjects.enchant.tech.PrimalKatana.TECH_ID;
 import static com.rschao.plugins.divineObjects.enchant.tech.PrimalKatana.plugin;
 
 public class AegisBladeTechs {
@@ -83,9 +89,53 @@ public class AegisBladeTechs {
             ctx.caster().sendMessage(ChatColor.GREEN + "Your opponent " + target.getName() +"' supreme powers have been temporarily restrained");
         }
     });
+
+    static Technique awakening = new Technique("awakening", "Awakening", new TechniqueMeta(false, 0, List.of("Awakens the Primal Oblivion enchantment")), TargetSelectors.self(), (ctx, token) ->{
+        Player p = ctx.caster();
+        ItemStack i = p.getInventory().getItemInMainHand();
+        if(!i.isSimilar(DivineItems.AegisSword())) return;
+        List<String> dialogue = List.of(
+                "I am thou, and thou art I.",
+                "Heed my call, blade of memory",
+                "Let our enemies fall to the power of the world itself.",
+                "Let us show them the supreme manifestation of memories.",
+                "Rise above, Aegis of Memory, for here is thy true power!",
+                ChatColor.GREEN + (ChatColor.BOLD + "Divine Awakening: Sword of the Aegis") + ChatColor.RESET + "!"
+        );
+
+        for(int it = 0; it < dialogue.size(); it++) {
+            int finalI = it;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                for(Player pl : Bukkit.getOnlinePlayers()){
+                    if(finalI == dialogue.size() - 1){
+                        pl.sendTitle(dialogue.get(finalI), "", 10, 70, 20);
+                    }
+                    else {
+                        pl.sendMessage(dialogue.get(finalI));
+                    }
+                }
+            }, it*30L); // Delay of 30 ticks (1.5 seconds)
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, () ->{
+            if(i.isSimilar(DivineItems.AegisSword())) {
+                p.getInventory().setItemInMainHand(DivineItems.AegisSwordAwakened());
+                for(Player pl : Bukkit.getOnlinePlayers()){
+                    pl.sendMessage(ChatColor.GREEN + ColorCodes.BOLD.getCode() + "The Sword of the Aegis has been awakened!");
+                    TechRegistry.getAllTechniques(TECH_ID).getLast().use(new TechniqueContext(p, p.getInventory().getItemInMainHand()));
+                }
+            }
+        }, 30*(dialogue.size()+2));
+    });
     static Technique chronos_flow = new Technique("supreme:chronos_flow", "Supreme Magic: Chronos Flow",
             true, cooldownHelper.hour, List.of("Restores that which has been erased from you by oblivion"),
             TargetSelectors.self(), (ctx, token) ->{
+        if(Events.forgottenItems.getOrDefault(ctx.caster(), new ArrayList<>()).isEmpty()){
+            if(ctx.caster().getInventory().contains(DivineItems.AishiaAegisCore())){
+                ctx.caster().getInventory().remove(DivineItems.AishiaAegisCore());
+                awakening.use(new TechniqueContext(ctx.caster(), ctx.caster().getInventory().getItemInMainHand()));
+            }
+        }
+
         List<String> dialogue = List.of(
                 "I am thou, and thou art I.",
                 "Heed my call, world of Showdown.",
