@@ -6,6 +6,8 @@ import com.delta.plugins.techs.Familiar_love;
 import com.rschao.enchants.OblivionEnchant;
 import com.rschao.events.soulEvents;
 import com.rschao.plugins.divineObjects.Plugin;
+import com.rschao.plugins.divineObjects.enchant.AegisBlade;
+import com.rschao.plugins.divineObjects.enchant.BladeOfTheEnd;
 import com.rschao.plugins.divineObjects.enchant.PrimalOblivion;
 import com.rschao.plugins.divineObjects.event.Events;
 import com.rschao.plugins.divineObjects.item.DivineItems;
@@ -295,14 +297,32 @@ public class OblivionKingTechs {
                     if(soulEvents.hasSoul(p, 100)) pops*=2;
                     FileConfiguration configuration = com.delta.plugins.Plugin.getPlugin(com.delta.plugins.Plugin.class).getConfig();
                     List<String> ids = configuration.getStringList(p.getName() + ".groupids");
+                    boolean dupepop = false;
+                    for(ItemStack item : p.getInventory().getContents()){
+                        if(item == null) continue;
+                        if(!item.hasItemMeta()) continue;
+                        if(item.containsEnchantment(new OblivionEnchant().getCustomEnchantment().toBukkitEnchantment())){
+                            dupepop = true; //x2 if has an abyss with the oblivion enchantment
+                            break;
+                        }
+                        else if(item.containsEnchantment(new AegisBlade().getCustomEnchantment().toBukkitEnchantment())){
+                            dupepop = true; //x2 if has an abyss with the primal oblivion enchantment
+                            break;
+                        }
+                        else if(item.containsEnchantment(new BladeOfTheEnd().getCustomEnchantment().toBukkitEnchantment())){
+                            dupepop = true; //x2 if has an abyss with the primal katana enchantment
+                            break;
+                        }
+                    }
                     for(String id : ids){
                         for(Technique t : TechRegistry.getAllTechniques(id)){
                             if(t.getId().startsWith("supreme:")){
-                                pops*=2; //x2 again if has an abyss with a technique whose id starts with "supreme:"
+                                dupepop = true; //x2 again if has an abyss with a technique whose id starts with "supreme:"
                                 break;
                             }
                         }
                     }
+                    if(dupepop) pops*=2;
                     if(pops > 12) pops = 12;
                     if(pops == 12 && ctx.caster().getInventory().contains(DivineItems.RedAegisCore())){
                         ctx.caster().getInventory().remove(DivineItems.RedAegisCore());

@@ -444,7 +444,7 @@ public class PrimalKatana {
                 "May the souls who rejoice in an eternal now join together as one.",
                 "World of Aion! Heed my call! May the void become my blade, and my blade become the void!",
                 "In the name of " + ctx.caster().getName() + ", wielder of the Aegis of Atemporality" + ", i cast",
-                ChatColor.BLACK + (ChatColor.BOLD + "Supreme Magic: Slayer of Gods") + ChatColor.RESET + "!"
+                ChatColor.DARK_PURPLE + (ChatColor.BOLD + "Supreme Magic: Void Slash") + ChatColor.RESET + "!"
         );
 
         for(int i = 0; i < dialogue.size(); i++) {
@@ -473,11 +473,10 @@ public class PrimalKatana {
                         if(e.getLocation().distance(p.getLocation()) > 27) continue;
                         for(int i = 0; i<charges; i++){
                             if(i%3 != 0) continue;
-                            double h = e.getHealth();
                             double fh = e.getHealth()-20;
                             if(fh <= 0){
                                 e.removePotionEffect(PotionEffectType.RESISTANCE);
-                                Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), () ->e.damage(999), 1);
+                                Bukkit.getScheduler().runTaskLater(Plugin.getPlugin(Plugin.class), () ->e.damage(9999), 1);
                             }
                             else e.setHealth(fh);
                         }
@@ -493,8 +492,7 @@ public class PrimalKatana {
                                 if (ent == player) continue;
                                 Vector toEnt = ent.getLocation().toVector().subtract(player.getEyeLocation().toVector());
                                 double dot = toEnt.normalize().dot(dir);
-                                double dist = ent.getLocation().distance(player.getEyeLocation());
-                                if (dot > 0.85) {
+                                if (dot > 0.8) {
                                     ent.damage(9999, player);
                                     ent.setNoDamageTicks(1);
                                 }
